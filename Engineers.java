@@ -25,11 +25,12 @@ public class Engineers extends Staff {
 
 	@Override
 	public void displayInformation() {
-		System.out.printf("%-20s|", super.getName());
+		System.out.printf("|%-20s|", super.getName());
 		System.out.printf("%-20d|", super.getAge());
-		System.out.printf("%-20s|", super.getGender().values());
+		System.out.printf("%-20s|", super.getGender());
 		System.out.printf("%-20s|", super.getAdress());
-		System.out.printf("%-20s|", getMajor());
-		System.out.println();
+		System.out.printf("%-20s|\n", getMajor());
+		System.out.println(
+				" --------------------------------------------------------------------------------------------------------");
 	}
 }

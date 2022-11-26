@@ -1,6 +1,8 @@
 package com.vti.backend;
 
 import java.util.ArrayList;
+import java.util.InputMismatchException;
+import java.util.Iterator;
 import java.util.Scanner;
 
 import com.vti.entity.Employees;
@@ -42,20 +44,28 @@ public class AccountBackEnd {
 			System.out.println("+------------------------------------------------------+");
 			System.out.println("Please choose your options");
 			// select
-			switch (scanner.nextInt()) {
-			// 1. THÊM MỚI CÁN BỘ
+			int input = 0;
+			while (input < 1 || input > 5) {
+				try {
+					input = scanner.nextInt();
+				} catch (InputMismatchException e) {
+					System.out.println("please enter number only");
+				}
+			}
+			switch (input) {
 			case 1:
 				addStaffs();
 				break;
-			// 2. TÌM KIẾM THEO HỌ TÊN
 			case 2:
 				searchByName();
 				break;
 			// 3: HIỂN THỊ THÔNG TIN THEO DANH SÁCH CÁN BỘ
 			case 3:
+				showInfo();
 				break;
 			// 4: NHẬP TÊN CÁN BỘ VÀ XÓA TÊN CÁN BỘ ĐÓ
 			case 4:
+				deleteByName();
 				break;
 			// 5. THOÁT KHỎI CHƯƠNG TRÌNH
 			case 5:
@@ -125,6 +135,15 @@ public class AccountBackEnd {
 
 		// SHOW INFOR RA CONSOLE
 		System.out.println("your worker infor is:\n");
+		System.out.println(
+				" --------------------------------------------------------------------------------------------------------");
+		System.out.printf("|%-20s|", "Name");
+		System.out.printf("%-20s|", "Age");
+		System.out.printf("%-20s|", "Gender");
+		System.out.printf("%-20s|", "Address");
+		System.out.printf("%-20s|\n", "Level");
+		System.out.println(
+				" --------------------------------------------------------------------------------------------------------");
 		worker.displayInformation();
 	}
 
@@ -166,13 +185,15 @@ public class AccountBackEnd {
 
 		// SHOW INFOR RA CONSOLE
 		System.out.println("your worker infor is:");
-		System.out.printf("%-20s|", "Name");
+		System.out.println(
+				" --------------------------------------------------------------------------------------------------------");
+		System.out.printf("|%-20s|", "Name");
 		System.out.printf("%-20s|", "Age");
 		System.out.printf("%-20s|", "Gender");
 		System.out.printf("%-20s|", "Address");
-		System.out.printf("%-20s|%n", "Job");
+		System.out.printf("%-20s|\n", "Job");
 		System.out.println(
-				"---------------------------------------------------------------------------------------------------------");
+				" --------------------------------------------------------------------------------------------------------");
 		employees.displayInformation();
 	}
 
@@ -215,7 +236,7 @@ public class AccountBackEnd {
 
 		// SHOW INFOR RA CONSOLE
 		System.out.println("your worker infor is:");
-		System.out.printf("%-20s|", "Name");
+		System.out.printf("|%-20s|", "Name");
 		System.out.printf("%-20s|", "Age");
 		System.out.printf("%-20s|", "Gender");
 		System.out.printf("%-20s|", "Address");
@@ -227,25 +248,64 @@ public class AccountBackEnd {
 
 	// 2. TÌM KIẾM THEO HỌ TÊN
 	public void searchByName() {
-		System.out.println("please enter name of employees:");
-		for (int i = 0; i < staffs.size(); i++) {
-			scanner.nextLine();
-			// KIỂM TRA CHUỖI NHẬP VÀO CÓ BAO GỒM SỐ HAY KHÔNG
-			// NẾU KHÔNG, YÊU CẦU NHẬP LẠI
-			String input;
+		// KIỂM TRA CHUỖI NHẬP VÀO CÓ BAO GỒM SỐ HAY KHÔNG
+		// NẾU CÓ, YÊU CẦU NHẬP LẠI
+		String input = scanner.nextLine();
+		boolean pass = true;
+		while (pass) {
+			System.out.println("please enter name:");
 			input = scanner.nextLine();
-			char[] charArray = input.replaceAll(" ", "").toCharArray();
-			for (char c : charArray) {
-				if ((c < 'A') || (c > 'z') || ((c > 'Z') && (c < 'a'))) {
-					System.out.println("name cannot include special character or number");
-					searchByName();
-					break;
-				}
+			if (Check(input) == true) {
+				pass = false;
 			}
+		}
 
+		for (int i = 0; i < staffs.size(); i++) {
 			if (input.equalsIgnoreCase(staffs.get(i).getName())) {
 				System.out.println("info of employees " + staffs.get(i).getName() + " is:");
 				staffs.get(i).displayInformation();
+			}
+		}
+
+	}
+
+	public void showInfo() {
+		System.out.println(
+				" --------------------------------------------------------------------------------------------------------");
+		System.out.printf("|%-20s|", "Name");
+		System.out.printf("%-20s|", "Age");
+		System.out.printf("%-20s|", "Gender");
+		System.out.printf("%-20s|", "Address");
+		System.out.printf("%-20s|\n", "Level");
+		System.out.println(
+				" --------------------------------------------------------------------------------------------------------");
+		for (Staff staff : staffs) {
+			staff.displayInformation();
+		}
+	}
+
+	public boolean Check(String string) {
+		char[] charArray;
+		charArray = string.toUpperCase().replaceAll(" ", "").toCharArray();
+		for (char c : charArray) {
+			if (c < 'A' || c > 'Z') {
+				System.out.println("name cannot include number or character");
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public void deleteByName() {
+		System.out.println("please enter name of empployee you want delete:");
+		scanner.nextLine();
+		String name = scanner.nextLine();
+		Iterator<Staff> staffIterator = staffs.iterator();
+		while (staffIterator.hasNext()) {
+			Staff subStaff = staffIterator.next();
+			if (subStaff.getName().equalsIgnoreCase(name)) {
+				System.out.println(subStaff.getName() + " have been deleted");
+				staffIterator.remove();
 			}
 		}
 	}
